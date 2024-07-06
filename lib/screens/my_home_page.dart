@@ -15,10 +15,10 @@ class MyHomePageStateful extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
-    Widget page;
+    Widget panel;
     switch (selectedIndex) {
       case 0:
-        page = Center(
+        panel = Center(
             child: Text('Welcome to Lab 1',
                 style: TextStyle(
                     fontSize:
@@ -26,47 +26,49 @@ class MyHomePageStateful extends State<MyHomePage> {
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold)));
       case 1:
-        page = CreateProduct();
+        panel = CreateProduct();
       case 2:
-        page = ViewProduct();
+        panel = ViewProduct();
       default:
-        page = Placeholder();
+        panel = Placeholder();
     }
 
     // The container for the current page, with its background color
-    var mainArea = ColoredBox(
+    var workArea = ColoredBox(
       color: colorScheme.surfaceContainerHighest,
-      child: page,
+      child: panel,
     );
 
-    var wideLayout = Row(
+    var navigationPanel = SafeArea(
+      child: NavigationRail(
+        backgroundColor: colorScheme.surfaceContainer,
+        extended: true,
+        destinations: [
+          NavigationRailDestination(
+              icon: Icon(Icons.home), label: Text('Home')),
+          NavigationRailDestination(
+              icon: Icon(Icons.create), label: Text('Create')),
+          NavigationRailDestination(
+              icon: Icon(Icons.search), label: Text('View'))
+        ],
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (value) {
+          setState(() {
+            selectedIndex = value;
+          });
+        },
+      ),
+    );
+
+    var layout = Row(
       children: [
-        SafeArea(
-          child: NavigationRail(
-            backgroundColor: colorScheme.surfaceContainer,
-            extended: true,
-            destinations: [
-              NavigationRailDestination(
-                  icon: Icon(Icons.home), label: Text('Home')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.create), label: Text('Create')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.search), label: Text('View'))
-            ],
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (value) {
-              setState(() {
-                selectedIndex = value;
-              });
-            },
-          ),
-        ),
-        Expanded(child: mainArea),
+        navigationPanel,
+        Expanded(child: workArea),
       ],
     );
 
     return Scaffold(
-      body: wideLayout,
+      body: layout,
     );
   }
 }
